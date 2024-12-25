@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        .box{
+            width: 600px;
+            height: 600px;
+            background-color:#d2b48c ;
+        }
+    </style>
+</head>
+<body>
+<div class="box" id="main"></div> <!-- 添加id="main" -->
+
+<script type="text/javascript" src="/static/echarts.js"></script>
+
+
+
+<script>
+    var chartDom = document.getElementById('main');
+    var myChart = echarts.init(chartDom);
+    var option;
+
+    option = {
+        title: {
+            text: '云休记事本-用户年龄分布图',
+            subtext: '占比详情',
+            left: 'center'
+        },
+        tooltip: {
+            trigger: 'item'
+        },
+        legend: {
+            orient: 'vertical',
+            left: 'left'
+        },
+        series: [
+            {
+                name: 'Access From',
+                type: 'pie',
+                radius: '50%',
+                data: [
+                    { value: 1048, name: '不满18岁' },
+                    { value: 735, name: '18岁到40岁' },
+                    { value: 580, name: '40岁到65岁' },
+                    { value: 484, name: '65岁以上' }
+                ],
+                emphasis: {
+                    itemStyle: {
+                        shadowBlur: 10,
+                        shadowOffsetX: 0,
+                        shadowColor: 'rgba(0, 0, 0, 0.5)'
+                    }
+                },
+
+                label: {
+                    show: true,
+                    formatter: '{b}: {d}%' // 显示标签为名称和百分比
+                },
+                labelLine: {
+                    smooth: 0.2,
+                    length: 10,
+                    length2: 20
+                }
+
+
+            }
+        ]
+    };
+
+    option && myChart.setOption(option);
+</script>
+</body>
+</html>

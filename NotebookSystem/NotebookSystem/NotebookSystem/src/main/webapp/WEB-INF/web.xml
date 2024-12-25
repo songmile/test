@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app version="3.0" xmlns="http://java.sun.com/xml/ns/javaee">
+  <display-name>ssm</display-name>
+  <!-- 配置DispatcherServlet -->
+  <servlet>
+    <servlet-name>springmvc</servlet-name>
+    <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+    <!-- 自动加载ssm配置文件 -->
+    <init-param>
+      <param-name>contextConfigLocation</param-name>
+      <param-value>classpath:applicationContext.xml</param-value>
+    </init-param>
+    <!--当值≥0时，启动时就加载;当值<0或不指定时，则表示第一次请求时加载-->
+    <load-on-startup>1</load-on-startup>
+    <!--配置上传文件解析-->
+    <multipart-config>
+      <max-file-size>5242880</max-file-size>
+      <max-request-size>10485760</max-request-size>
+      <file-size-threshold>0</file-size-threshold>
+    </multipart-config>
+  </servlet>
+  <!-- 配置DispatcherServlet接受所有URL请求 -->
+  <servlet-mapping>
+    <servlet-name>springmvc</servlet-name>
+    <url-pattern>/</url-pattern>
+  </servlet-mapping>
+
+  <!-- 编码过滤器，解决中文乱码问题 -->
+  <filter>
+    <filter-name>encodingFilter</filter-name>
+    <filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
+    <init-param>
+      <param-name>encoding</param-name>
+      <param-value>UTF-8</param-value>
+    </init-param>
+    <init-param>
+      <param-name>forceEncoding</param-name>
+      <param-value>true</param-value>
+    </init-param>
+  </filter>
+  <filter-mapping>
+    <filter-name>encodingFilter</filter-name>
+    <url-pattern>/*</url-pattern>
+  </filter-mapping>
+</web-app>

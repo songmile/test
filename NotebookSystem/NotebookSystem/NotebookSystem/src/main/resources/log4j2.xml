@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="WARN" monitorInterval="30">
+<Properties>
+    <property name="PATTERN">%d{yyyy-MM-dd HH:mm:ss.SSS} [%t-%L] %-5level %logger{36} - %msg%n</property>
+</Properties>
+
+<Appenders>
+    <!--输出控制台配置 -->
+    <Console name="Console" target="SYSTEM_OUT">
+        <!-- 控制台只输出level及以上级别的信息 -->
+        <ThresholdFilter level="trace" onMatch="ACCEPT" onMismatch="DENY"/>
+        <PatternLayout pattern="${PATTERN}"/>
+    </Console>
+</Appenders>
+
+<!--定义logger，只有定义了logger并引入的appender，appender才会生效-->
+<Loggers>
+    <!-- 配置日志的根节点 -->
+    <root level="debug">
+        <appender-ref ref="Console"/>
+    </root>
+</Loggers>
+</Configuration>

@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cqie.edu.NotebookSystem.mapper.CustomerMapper">
+    <!--查询符合条件的实体-->
+    <select id="list" parameterType="cqie.edu.NotebookSystem.domain.qo.CustomerQo" resultType="cqie.edu.NotebookSystem.domain.Customer">
+        select * from customer
+        <where>
+            <if test="name!=null and name!=''">
+                and name like CONCAT('%', #{name}, '%')
+            </if>
+            <if test="mobile!=null and mobile!=''">
+                and mobile=#{mobile}
+            </if>
+            <if test="age!=null">
+                and TIMESTAMPDIFF(YEAR, birthday, CURDATE())=#{age}
+            </if>
+            <if test="regTimeStart!=null and regTimeStart!=''">
+                and regTime &gt;= #{regTimeStart}
+            </if>
+            <if test="regTimeEnd!=null and regTimeEnd!=''">
+                and regTime &lt;= #{regTimeEnd}
+            </if>
+        </where>
+    </select>
+    <!--新增实体-->
+    <insert id="insert" parameterType="cqie.edu.NotebookSystem.domain.Customer"  useGeneratedKeys="true" keyProperty="id">
+        insert into customer(userId, name, birthday, mobile, email, regTime)
+        values (#{userId}, #{name}, #{birthday}, #{mobile}, #{email}, #{regTime})
+    </insert>
+    <!--修改实体-->
+    <update id="update" parameterType="cqie.edu.NotebookSystem.domain.Customer">
+        update customer
+        <set>
+            <if test="userId!=null">
+                userId=#{userId}
+            </if>
+            <if test="name!=null and name!=''">
+                ,name=#{name}
+            </if>
+            <if test="birthday!=null and birthday!=''">
+                ,birthday=#{birthday}
+            </if>
+            <if test="mobile!=null and mobile!=''">
+                ,mobile=#{mobile}
+            </if>
+            <if test="email!=null and email!=''">
+                ,email=#{email}
+            </if>
+            <if test="regTime!=null and regTime!=''">
+                ,regTime=#{regTime}
+            </if>
+        </set>
+        where id=#{id}
+    </update>
+    <!--根据主键删除实体-->
+    <delete id="deleteById" parameterType="int">
+        delete from customer where id=#{id}
+    </delete>
+    <!--根据主键获取实体-->
+    <select id="getById" parameterType="int" resultType="cqie.edu.NotebookSystem.domain.Customer">
+        select * from customer where id=#{id}
+    </select>
+    <!--根据userId获取实体-->
+    <select id="getByUserId" parameterType="int" resultType="cqie.edu.NotebookSystem.domain.Customer">
+        select * from customer where userId=#{userId}
+    </select>
+    <!--根据name获取实体，不包含id指定行-->
+    <select id="getByName" resultType="cqie.edu.NotebookSystem.domain.Customer">
+        select * from customer
+        where name=#{name}
+        <if test="id!=null">
+            and id !=#{id}
+        </if>
+    </select>
+
+    <select id="getByAge" resultType="int">
+        SELECT COUNT(*) FROM customer
+        WHERE birthday >= #{startTime} AND birthday  &lt;= #{endTime}
+    </select>
+</mapper>

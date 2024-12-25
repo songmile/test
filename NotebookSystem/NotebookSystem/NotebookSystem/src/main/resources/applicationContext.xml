@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+http://www.springframework.org/schema/beans/spring-beans.xsd
+http://www.springframework.org/schema/context
+http://www.springframework.org/schema/context/spring-context.xsd
+http://www.springframework.org/schema/mvc
+http://www.springframework.org/schema/mvc/spring-mvc.xsd">
+
+    <!-- 自动扫描组件 -->
+    <context:component-scan base-package="cqie.edu.NotebookSystem" />
+    <!-- 开启SpringMVC框架的注解驱动 -->
+    <mvc:annotation-driven/>
+
+    <!-- 加载db.properties文件 -->
+    <context:property-placeholder ignore-unresolvable="true" location="classpath:db.properties"/>
+
+    <!--配置数据源,使用Druid连接池-->
+    <bean id="dataSource" class="com.alibaba.druid.pool.DruidDataSource"
+          destroy-method="close">
+        <!-- 数据库基本信息配置 -->
+        <property name="driverClassName" value="${jdbc.driver}" />
+        <property name="url" value="${jdbc.url}"/>
+        <property name="username" value="${jdbc.username}"/>
+        <property name="password" value="${jdbc.password}"/>
+        <!-- 最大并发连接数 -->
+        <property name = "maxActive" value = "${maxActive}" />
+        <!-- 初始化连接数量 -->
+        <property name = "initialSize" value = "${initialSize}" />
+        <!-- 配置获取连接等待超时的时间 -->
+        <property name = "maxWait" value = "${maxWait}" />
+        <!-- 最小空闲连接数 -->
+        <property name = "minIdle" value = "${minIdle}" />
+        <!-- 间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒 -->
+        <property name = "timeBetweenEvictionRunsMillis" value ="${timeBetweenEvictionRunsMillis}" />
+        <!-- 配置一个连接在池中最小生存的时间，单位是毫秒 -->
+        <property name = "minEvictableIdleTimeMillis" value ="${minEvictableIdleTimeMillis}" />
+        <property name = "validationQuery" value = "${validationQuery}" />
+        <property name = "testWhileIdle" value = "${testWhileIdle}" />
+        <property name = "testOnBorrow" value = "${testOnBorrow}" />
+        <property name = "testOnReturn" value = "${testOnReturn}" />
+        <property name = "removeAbandoned" value = "${removeAbandoned}" />
+        <property name = "removeAbandonedTimeout" value ="${removeAbandonedTimeout}" />
+        <property name = "logAbandoned" value = "${logAbandoned}" />
+    </bean>
+
+    <!--配置sqlSessionFactory-->
+    <!-- SqlSessionFactoryBean负责整合:把该类控制反转，将dao层生成的代理对象，进行控制反转，使Spring操作MyBatis对象-->
+    <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <!--关联数据源-->
+        <property name="dataSource" ref="dataSource"/>
+        <!--指定mapper映射文件地址-->
+        <property name="mapperLocations" value="classpath:mapper/*.xml"/>
+        <!--设置实体类包别名,简化Mapper文件的配置-->
+        <property name="typeAliasesPackage" value="cqie.edu.NotebookSystem.domain"/>
+        <!--分页插件-->
+        <property name="plugins">
+            <array>
+                <bean class="com.github.pagehelper.PageInterceptor"/>
+            </array>
+        </property>
+    </bean>
+    <!--mapper接口自动扫描-->
+    <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+        <property name="basePackage" value="cqie.edu.NotebookSystem.mapper" />
+    </bean>
+
+    <!--视图解析器-->
+    <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+        <property name="prefix" value="/WEB-INF/views/"/>
+        <property name="suffix" value=".jsp"/>
+    </bean>
+
+    <!--静态资源访问映射路径-->
+    <mvc:resources location="/static/" mapping="/static/**"/>
+
+    <!--配置拦截器-->
+    <mvc:interceptors>
+        <!--配置全局拦截器,拦截所有用户请求-->
+        <bean class="cqie.edu.NotebookSystem.Interceptor.LoginInterceptor"/>
+    </mvc:interceptors>
+</beans>
